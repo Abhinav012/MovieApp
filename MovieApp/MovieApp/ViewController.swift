@@ -79,16 +79,17 @@ extension ViewController: UICollectionViewDelegate, UICollectionViewDataSource, 
     func collectionView(_ collectionView: UICollectionView, cellForItemAt indexPath: IndexPath) -> UICollectionViewCell {
         let cell = collectionView.dequeueReusableCell(withReuseIdentifier: "cell", for: indexPath) as! NowPlayingCollectionViewCell
         cell.layer.cornerRadius = 10
+        cell.containerView.layer.cornerRadius = 10
 //        cell.layer.shadowColor = UIColor.lightGray.cgColor
 //        cell.layer.shadowRadius = 0
 //        cell.layer.shadowOffset = CGSize(width: 0, height: 1)
 //        cell.layer.shadowOpacity = 1
 //
-        cell.layer.shadowColor = UIColor.gray.cgColor
-        cell.layer.shadowOffset = CGSize(width: 0, height: 2.0)
-        cell.layer.shadowRadius = 10.0
-        cell.layer.shadowOpacity = 1.0
-        cell.layer.masksToBounds = true
+        cell.layer.shadowColor = UIColor.lightGray.cgColor
+        cell.layer.shadowOffset = CGSize(width: 0, height: 20)
+        cell.layer.shadowRadius = 20
+        cell.layer.shadowOpacity = 0.5
+        cell.layer.masksToBounds = false
         //cell.layer.shadowPath = UIBezierPath(roundedRect:cell.bounds, cornerRadius:cell.contentView.layer.cornerRadius).cgPath
         
         cell.movieImageView.sd_setImage(with: URL(string: imagDwldBaseURL+movies[indexPath.row].posterPath!), completed: nil)

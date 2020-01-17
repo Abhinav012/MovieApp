@@ -10,6 +10,7 @@ import UIKit
 
 class NowPlayingCollectionViewCell: UICollectionViewCell {
     
+    @IBOutlet weak var containerView: UIView!
     @IBOutlet weak var originalTitle: UILabel!
     @IBOutlet weak var title: UILabel!
     @IBOutlet weak var movieImageView: UIImageView!
