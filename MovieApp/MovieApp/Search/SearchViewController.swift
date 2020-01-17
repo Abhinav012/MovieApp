@@ -148,17 +148,33 @@ extension SearchViewController: UITableViewDelegate, UITableViewDataSource{
 }
 
 extension SearchViewController: UISearchBarDelegate{
+    
+    func searchBarTextDidBeginEditing(_ searchBar: UISearchBar) {
+       
+        searchBar.showsCancelButton = true
+    }
+    
     func searchBar(_ searchBar: UISearchBar, textDidChange searchText: String) {
         
         didSelectedMovie = false
         
+        if searchText == ""{
+            searchBar.showsCancelButton = false
+        }
+        else{
+            searchBar.showsCancelButton = true
+        }
+        
+        
         if searchText.count >= 3{
+            
             searchMoviesLabel.isHidden = true
             self.pageCount = 1
             self.searchText = searchText
             fetchSearchData(searchText: searchText, pageCount: self.pageCount)
             
         }else{
+            
             searchMoviesLabel.isHidden = false
             self.searchedMovies = [Movie]()
             DispatchQueue.main.async {
@@ -171,6 +187,18 @@ extension SearchViewController: UISearchBarDelegate{
     
     func searchBarSearchButtonClicked(_ searchBar: UISearchBar) {
         searchBar.resignFirstResponder()
+    }
+    
+    func searchBarCancelButtonClicked(_ searchBar: UISearchBar) {
+        searchBar.showsCancelButton = false
+        searchBar.resignFirstResponder()
+        searchBar.text = ""
+        self.searchedMovies = [Movie]()
+         searchMoviesLabel.isHidden = false
+        DispatchQueue.main.async {
+            self.searchTableView.separatorStyle = .none
+            self.searchTableView.reloadData()
+        }
     }
 }
 

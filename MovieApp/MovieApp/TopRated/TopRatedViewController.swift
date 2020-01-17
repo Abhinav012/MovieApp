@@ -60,7 +60,7 @@ extension TopRatedViewController: UITableViewDataSource, UITableViewDelegate{
     func tableView(_ tableView: UITableView, cellForRowAt indexPath: IndexPath) -> UITableViewCell {
          moviesScrolledCount = indexPath.row
         
-        if indexPath.row == popularMovies.count-12{
+        if indexPath.row-1 == popularMovies.count-11{
             pageEndReached = true
         }
         
@@ -173,28 +173,31 @@ extension TopRatedViewController: UICollectionViewDelegate, UICollectionViewData
 extension TopRatedViewController: UIScrollViewDelegate{
     
     func scrollViewDidScroll(_ scrollView: UIScrollView) {
-        if (scrollView.contentOffset.y+300+127+10*80 >= (scrollView.contentSize.height - scrollView.frame.size.height) && pageEndReached) {
+        if (scrollView.contentOffset.y+127+300+10*80 >= (scrollView.contentSize.height - scrollView.frame.size.height) && pageEndReached) {
             pageEndReached = false
             let value: Double = Double((moviesScrolledCount+10)/20)
             if floor(value) == value {
                 pageCount = Int((moviesScrolledCount+10)/20) + 1
             }
             
-            
-            self.apiManager.fetchMovieDetails(lang: "en-US", page: pageCount, category: .popular)
-            
-            
-            DispatchQueue.global().sync {
-                DispatchQueue.main.asyncAfter(deadline: .now()+2, execute: {
-                    DatabaseManager.manager.fetchMovieDetails(category: .popular)
-                })
+            if pageCount != 1{
+                print("Page Count: \(pageCount)")
+                self.apiManager.fetchMovieDetails(lang: "en-US", page: pageCount, category: .popular)
                 
                 
-                DispatchQueue.main.asyncAfter(deadline: .now()+3, execute: {
-                    self.popularMovies = DatabaseManager.popularMovies
-                    self.topRatedMoviesTableView.reloadData()
-                })
+                DispatchQueue.global().sync {
+                    DispatchQueue.main.asyncAfter(deadline: .now()+2, execute: {
+                        DatabaseManager.manager.fetchMovieDetails(category: .popular)
+                    })
+                    
+                    
+                    DispatchQueue.main.asyncAfter(deadline: .now()+3, execute: {
+                        self.popularMovies = DatabaseManager.popularMovies
+                        self.topRatedMoviesTableView.reloadData()
+                    })
+                }
             }
+            
             
         }
         
@@ -210,21 +213,24 @@ extension TopRatedViewController: UIScrollViewDelegate{
                 pageCount = Int((topRatedMoviesScrollCount+5)/20) + 1
             }
             
+             if pageCount != 1{
             
-            self.apiManager.fetchMovieDetails(lang: "en-US", page: pageCount, category: .topRated)
-            
-            
-            DispatchQueue.global().sync {
-                DispatchQueue.main.asyncAfter(deadline: .now()+2, execute: {
-                    DatabaseManager.manager.fetchMovieDetails(category: .topRated)
-                })
+                self.apiManager.fetchMovieDetails(lang: "en-US", page: pageCount, category: .topRated)
                 
                 
-                DispatchQueue.main.asyncAfter(deadline: .now()+3, execute: {
-                    self.topRatedMovies = DatabaseManager.topRatedMovies
-                    self.topRatedMoviesTableView.reloadData()
-                })
+                DispatchQueue.global().sync {
+                    DispatchQueue.main.asyncAfter(deadline: .now()+2, execute: {
+                        DatabaseManager.manager.fetchMovieDetails(category: .topRated)
+                    })
+                    
+                    
+                    DispatchQueue.main.asyncAfter(deadline: .now()+3, execute: {
+                        self.topRatedMovies = DatabaseManager.topRatedMovies
+                        self.topRatedMoviesTableView.reloadData()
+                    })
+                }
             }
+           
             
         }
         

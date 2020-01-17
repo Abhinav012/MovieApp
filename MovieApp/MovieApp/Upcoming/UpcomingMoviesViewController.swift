@@ -77,7 +77,7 @@ extension UpcomingMoviesViewController: UITableViewDelegate, UITableViewDataSour
         cell.voteCount.text = "vote count: \(movies[indexPath.row].voteCount!)"
         moviesScrolledCount = indexPath.row+1
         
-        if indexPath.row == movies.count-11{
+        if indexPath.row-1 == movies.count-10{
             pageEndReached = true
         }
         
@@ -106,21 +106,23 @@ extension UpcomingMoviesViewController: UIScrollViewDelegate{
                 pageCount = Int((moviesScrolledCount+10)/20) + 1
             }
             
-            
+            if pageCount != 1{
+                print("Page Count: \(pageCount)")
             self.apiManager.fetchMovieDetails(lang: "en-US", page: pageCount, category: .upcoming)
-            
-            
-            DispatchQueue.global().sync {
-                DispatchQueue.main.asyncAfter(deadline: .now()+2, execute: {
-                    DatabaseManager.manager.fetchMovieDetails(category: .upcoming)
-                })
                 
-                
-                DispatchQueue.main.asyncAfter(deadline: .now()+3, execute: {
-                    self.movies = DatabaseManager.upcomingMovies
-                    self.upcomingTableView.reloadData()
-                })
+                DispatchQueue.global().sync {
+                    DispatchQueue.main.asyncAfter(deadline: .now()+2, execute: {
+                        DatabaseManager.manager.fetchMovieDetails(category: .upcoming)
+                    })
+                    
+                    
+                    DispatchQueue.main.asyncAfter(deadline: .now()+3, execute: {
+                        self.movies = DatabaseManager.upcomingMovies
+                        self.upcomingTableView.reloadData()
+                    })
+                }
             }
+          
             
         }
         

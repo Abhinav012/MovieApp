@@ -138,17 +138,19 @@ extension ViewController: UIScrollViewDelegate{
                 pageCount = Int((moviesScrolledCount+5)/20) + 1
             }
             
+            if pageCount != 1 {
+                self.apiManager.fetchMovieDetails(lang: "en-US", page: self.pageCount, category: .nowPlaying)
+                
+                
+                DispatchQueue.main.asyncAfter(deadline: .now()+1, execute: {
+                    
+                    self.databaseManager.fetchMovieDetails(category: .nowPlaying)
+                    self.movies = DatabaseManager.nowPlayingMovies
+                    print("Movie Count \(self.movies.count)")
+                    self.nowPlayingMoviesCollectionView.reloadData()
+                })
+            }
             
-            self.apiManager.fetchMovieDetails(lang: "en-US", page: self.pageCount, category: .nowPlaying)
-            
-            
-            DispatchQueue.main.asyncAfter(deadline: .now()+1, execute: {
-               
-                self.databaseManager.fetchMovieDetails(category: .nowPlaying)
-                self.movies = DatabaseManager.nowPlayingMovies
-                print("Movie Count \(self.movies.count)")
-                self.nowPlayingMoviesCollectionView.reloadData()
-            })
 
         }
 
