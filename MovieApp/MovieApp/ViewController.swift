@@ -12,6 +12,8 @@ import SDWebImage
 class ViewController: UIViewController {
 
     @IBOutlet weak var nowPlayingMoviesCollectionView: UICollectionView!
+    @IBOutlet weak var dateLabel: UILabel!
+    
     
     var apiManager = APIManager()
     var databaseManager = DatabaseManager()
@@ -22,7 +24,16 @@ class ViewController: UIViewController {
     
     override func viewDidLoad() {
         super.viewDidLoad()
-        //DatabaseManager.manager.fetchMovieDetails(category: .nowPlaying)
+        
+        let date = Date()
+        let calender = Calendar(identifier: .gregorian)
+        let dateOfMonth = calender.component(.day, from: date)
+        let monthOfCalender = Month(rawValue: calender.component(.month, from: date))
+        let weekdayOfMonth = WeekDay(rawValue: calender.component(.weekday, from: date))
+        
+        setDayAndmonthOfYear(weekday: weekdayOfMonth!, month: monthOfCalender!)
+        
+        dateLabel.text = "\(day) \(dateOfMonth) \(monthOfYear)"
         
         DispatchQueue.global().sync {
             self.apiManager.fetchMovieDetails(lang: "en-US", page: 1, category: .nowPlaying)
@@ -56,7 +67,8 @@ class ViewController: UIViewController {
     override func viewDidDisappear(_ animated: Bool) {
         super.viewDidDisappear(true)
     }
-
+    
+    
 }
 
 extension ViewController: UICollectionViewDelegate, UICollectionViewDataSource, UICollectionViewDelegateFlowLayout{

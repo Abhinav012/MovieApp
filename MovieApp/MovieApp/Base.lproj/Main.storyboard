@@ -139,9 +139,21 @@ TWFydmVsLCAQQXZlbmdlcnM
                                     <outlet property="delegate" destination="IrW-Kv-f2S" id="PVR-T5-Aft"/>
                                 </connections>
                             </tableView>
+                            <label opaque="NO" userInteractionEnabled="NO" contentMode="left" horizontalHuggingPriority="251" verticalHuggingPriority="251" text="Search your favourate movies" textAlignment="natural" lineBreakMode="tailTruncation" baselineAdjustment="alignBaselines" adjustsFontSizeToFit="NO" translatesAutoresizingMaskIntoConstraints="NO" id="Zk4-fy-ImV">
+                                <rect key="frame" x="74" y="323" width="227" height="21"/>
+                                <constraints>
+                                    <constraint firstAttribute="width" constant="227" id="Lj5-Z3-VdY"/>
+                                    <constraint firstAttribute="height" constant="21" id="NaP-rX-VeF"/>
+                                </constraints>
+                                <fontDescription key="fontDescription" type="system" pointSize="17"/>
+                                <color key="textColor" white="0.788991153" alpha="1" colorSpace="custom" customColorSpace="genericGamma22GrayColorSpace"/>
+                                <nil key="highlightedColor"/>
+                            </label>
                         </subviews>
                         <color key="backgroundColor" white="1" alpha="1" colorSpace="custom" customColorSpace="genericGamma22GrayColorSpace"/>
                         <constraints>
+                            <constraint firstItem="Zk4-fy-ImV" firstAttribute="centerX" secondItem="Iep-bP-a7O" secondAttribute="centerX" id="80l-K7-uon"/>
+                            <constraint firstItem="Zk4-fy-ImV" firstAttribute="centerY" secondItem="Iep-bP-a7O" secondAttribute="centerY" id="EKg-03-6vo"/>
                             <constraint firstItem="B9C-Yx-23N" firstAttribute="leading" secondItem="uiF-DC-z2a" secondAttribute="leading" id="FkU-C3-PLi"/>
                             <constraint firstItem="CSi-Wn-cEy" firstAttribute="trailing" secondItem="uiF-DC-z2a" secondAttribute="trailing" id="Jkm-rk-R2S"/>
                             <constraint firstItem="CSi-Wn-cEy" firstAttribute="top" secondItem="B9C-Yx-23N" secondAttribute="bottom" id="Wnp-PA-Y11"/>
@@ -155,6 +167,7 @@ TWFydmVsLCAQQXZlbmdlcnM
                     <navigationItem key="navigationItem" id="76w-xU-hdJ"/>
                     <connections>
                         <outlet property="searchBar" destination="B9C-Yx-23N" id="msk-vv-TZs"/>
+                        <outlet property="searchMoviesLabel" destination="Zk4-fy-ImV" id="i2G-4x-tKh"/>
                         <outlet property="searchTableView" destination="CSi-Wn-cEy" id="925-jx-OvE"/>
                     </connections>
                 </viewController>
@@ -808,6 +821,7 @@ TWFydmVsLCAQQXZlbmdlcnM
                     </view>
                     <navigationItem key="navigationItem" id="n8A-53-u5x"/>
                     <connections>
+                        <outlet property="dateLabel" destination="5VM-hF-Yag" id="0Z3-hz-GMV"/>
                         <outlet property="nowPlayingMoviesCollectionView" destination="jdl-vl-1xK" id="qZZ-UZ-Mk4"/>
                     </connections>
                 </viewController>

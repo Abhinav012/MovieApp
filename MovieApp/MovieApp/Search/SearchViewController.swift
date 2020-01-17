@@ -15,7 +15,7 @@ class SearchViewController: UIViewController {
     var didSelectedMovie: Bool = false
     var didDisplayedDetailedResults: Bool = false
     var pageCount = 1
-    var moviesScrolledCount = 0
+    var moviesScrolledCount = -1
     var pageEndReached = false
     var totalPageCount = 0
     var searchText = ""
@@ -23,6 +23,7 @@ class SearchViewController: UIViewController {
     @IBOutlet weak var searchBar: UISearchBar!
     @IBOutlet weak var searchTableView: UITableView!
     
+    @IBOutlet weak var searchMoviesLabel: UILabel!
     override func viewDidLoad() {
         super.viewDidLoad()
 
@@ -42,7 +43,7 @@ extension SearchViewController: UITableViewDelegate, UITableViewDataSource{
     
     func tableView(_ tableView: UITableView, cellForRowAt indexPath: IndexPath) -> UITableViewCell {
         
-        moviesScrolledCount = indexPath.row
+        moviesScrolledCount = indexPath.row+1
         
         if indexPath.row == searchedMovies.count-1{
             pageEndReached = true
@@ -53,14 +54,20 @@ extension SearchViewController: UITableViewDelegate, UITableViewDataSource{
         let cell = tableView.dequeueReusableCell(withIdentifier: "searchedMoviesDetailCell", for: indexPath) as! SearchedResultTableViewCell
         let movie = searchedMovies[indexPath.row]
             
-            if let _ = movie.posterPath, let _ = movie.backdropPath{
-                cell.backDropPathImageView.sd_setImage(with: URL(string: imagDwldBaseURL+movie.backdropPath!), completed: nil)
-                cell.posterImageView.sd_setImage(with: URL(string: imagDwldBaseURL+movie.posterPath!), completed: nil)
+            if let _ = movie.originalTitle, let _ = movie.popularity, let _ = movie.releaseDate, let _ = movie.voteCount{
+                cell.originalTitle.text = movie.originalTitle!
+                cell.popularity.text = "popularity: \(movie.popularity!)"
+                cell.releaseDate.text = "Release Date: \(movie.releaseDate!)"
+                cell.voteCount.text = "vote count: \(movie.voteCount!)"
         }
-        cell.originalTitle.text = movie.originalTitle!
-        cell.popularity.text = "popularity: \(movie.popularity!)"
-        cell.releaseDate.text = "Release Date: \(movie.releaseDate!)"
-        cell.voteCount.text = "vote count: \(movie.voteCount!)"
+            if let _ = movie.posterPath {
+                cell.posterImageView.sd_setImage(with: URL(string: imagDwldBaseURL+movie.posterPath!), completed: nil)
+            }
+            
+            if let _ = movie.backdropPath{
+                cell.backDropPathImageView.sd_setImage(with: URL(string: imagDwldBaseURL+movie.backdropPath!), completed: nil)
+            }
+        
         didDisplayedDetailedResults = true
             
         return cell
@@ -110,12 +117,16 @@ extension SearchViewController: UITableViewDelegate, UITableViewDataSource{
                         let movieDetails = try decoder.decode(MovieResults.self, from: data)
                         self.totalPageCount = movieDetails.totalPages!
                         if let searchedMovies = movieDetails.results{
-                           // self.searchedMovies = searchedMovies
-                            
-                            for movie in searchedMovies{
-                                print("Movie backdrop: \(movie.backdropPath)")
-                               self.searchedMovies.append(movie)
+                            if pageCount == 1 {
+                            self.searchedMovies = searchedMovies
                             }
+                            else{
+                                for movie in searchedMovies{
+                                    print("Movie backdrop: \(movie.backdropPath)")
+                                    self.searchedMovies.append(movie)
+                                }
+                            }
+                            
                             
                             DispatchQueue.main.async {
                                 self.searchTableView.separatorStyle = .singleLine
@@ -142,12 +153,13 @@ extension SearchViewController: UISearchBarDelegate{
         didSelectedMovie = false
         
         if searchText.count >= 3{
+            searchMoviesLabel.isHidden = true
             self.pageCount = 1
             self.searchText = searchText
             fetchSearchData(searchText: searchText, pageCount: self.pageCount)
             
         }else{
-            
+            searchMoviesLabel.isHidden = false
             self.searchedMovies = [Movie]()
             DispatchQueue.main.async {
                 self.searchTableView.separatorStyle = .none
@@ -180,7 +192,7 @@ extension SearchViewController: UIScrollViewDelegate{
                 pageCount = Int((moviesScrolledCount+10)/20) + 1
             }
             
-            if pageCount <= totalPageCount{
+            if pageCount <= totalPageCount && pageCount != 1{
                    fetchSearchData(searchText: self.searchText, pageCount: pageCount)
             }
             
