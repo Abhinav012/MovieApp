@@ -17,7 +17,7 @@ class TopRatedCollectionViewCell: UICollectionViewCell {
     @IBOutlet weak var movieDescription: UILabel!
     @IBOutlet weak var moviePosterImageView: UIImageView!
     @IBOutlet weak var seeAllButton: UIButton!
-    
+    @IBOutlet weak var searchAllButton: UIButton!
     override func awakeFromNib() {
         moviePosterImageView.layer.cornerRadius = 5
     }

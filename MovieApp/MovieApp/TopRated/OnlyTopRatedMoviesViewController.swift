@@ -1,14 +1,14 @@
 //
-//  UpcomingMoviesViewController.swift
+//  OnlyTopRatedMoviesViewController.swift
 //  MovieApp
 //
-//  Created by Thanos on 13/01/20.
+//  Created by Thanos on 17/01/20.
 //  Copyright © 2020 Thanos. All rights reserved.
 //
 
 import UIKit
 
-class UpcomingMoviesViewController: UIViewController {
+class Only_TopRatedMoviesViewController: UIViewController {
 
     var movies = [Movie]()
     var apiManager = APIManager()
@@ -16,50 +16,31 @@ class UpcomingMoviesViewController: UIViewController {
     var moviesScrolledCount = 0
     var pageEndReached: Bool = false
     var pageCount = 1
+    var pageMatch = 1
     
     
-    @IBOutlet weak var upcomingTableView: UITableView!
+    @IBOutlet weak var topRatedTableView: UITableView!
     override func viewDidLoad() {
         super.viewDidLoad()
-  
-        DispatchQueue.global().sync {
-             self.apiManager.fetchMovieDetails(lang: "en-US", page: 1, category: .upcoming)
-            DispatchQueue.main.asyncAfter(deadline: .now()+2, execute: {
-                DatabaseManager.manager.fetchMovieDetails(category: .upcoming)
-            })
-            
-            
-            DispatchQueue.main.asyncAfter(deadline: .now()+3, execute: {
-                self.movies = DatabaseManager.upcomingMovies
-                self.upcomingTableView.reloadData()
-            })
-        }
+        
         
     }
     
     override func viewWillAppear(_ animated: Bool) {
         super.viewWillAppear(animated)
-        
+        self.navigationController?.setNavigationBarHidden(false, animated: true)
+        pageMatch = pageCount
     }
     
     override func viewDidDisappear(_ animated: Bool) {
         super.viewDidDisappear(animated)
-  
+        
     }
-
-    /*
-    // MARK: - Navigation
-
-    // In a storyboard-based application, you will often want to do a little preparation before navigation
-    override func prepare(for segue: UIStoryboardSegue, sender: Any?) {
-        // Get the new view controller using segue.destination.
-        // Pass the selected object to the new view controller.
-    }
-    */
-
+    
+    
 }
 
-extension UpcomingMoviesViewController: UITableViewDelegate, UITableViewDataSource{
+extension Only_TopRatedMoviesViewController: UITableViewDelegate, UITableViewDataSource{
     func tableView(_ tableView: UITableView, numberOfRowsInSection section: Int) -> Int {
         return movies.count
     }
@@ -67,8 +48,8 @@ extension UpcomingMoviesViewController: UITableViewDelegate, UITableViewDataSour
     func tableView(_ tableView: UITableView, cellForRowAt indexPath: IndexPath) -> UITableViewCell {
         let cell = tableView.dequeueReusableCell(withIdentifier: "UMtableViewCell", for: indexPath) as! UpcomingMoviesTableViewCell
         if let _ =  movies[indexPath.row].posterPath {
-        cell.movieImageView.sd_setImage(with: URL(string: imagDwldBaseURL+movies[indexPath.row].posterPath! ), completed: nil)
-        
+            cell.movieImageView.sd_setImage(with: URL(string: imagDwldBaseURL+movies[indexPath.row].posterPath! ), completed: nil)
+            
         }
         
         cell.movieTitle.text = movies[indexPath.row].originalTitle
@@ -91,12 +72,12 @@ extension UpcomingMoviesViewController: UITableViewDelegate, UITableViewDataSour
     func tableView(_ tableView: UITableView, didSelectRowAt indexPath: IndexPath) {
         let vc = storyboard?.instantiateViewController(withIdentifier: "MovieDetailViewController") as! MovieDetailViewController
         vc.movie = movies[indexPath.row]
-        vc.movieCategory = .upcoming
+        vc.movieCategory = .topRated
         self.navigationController?.pushViewController(vc, animated: true)
     }
 }
 
-extension UpcomingMoviesViewController: UIScrollViewDelegate{
+extension Only_TopRatedMoviesViewController: UIScrollViewDelegate{
     
     func scrollViewDidScroll(_ scrollView: UIScrollView) {
         if (scrollView.contentOffset.y + 10*92 >= (scrollView.contentSize.height - scrollView.frame.size.height) && pageEndReached) {
@@ -106,23 +87,23 @@ extension UpcomingMoviesViewController: UIScrollViewDelegate{
                 pageCount = pageCount + 1
             }
             
-            if pageCount != 1{
+            if pageCount != pageMatch{
                 print("Page Count: \(pageCount)")
-            self.apiManager.fetchMovieDetails(lang: "en-US", page: pageCount, category: .upcoming)
+                self.apiManager.fetchMovieDetails(lang: "en-US", page: pageCount, category: .topRated)
                 
                 DispatchQueue.global().sync {
                     DispatchQueue.main.asyncAfter(deadline: .now()+2, execute: {
-                        DatabaseManager.manager.fetchMovieDetails(category: .upcoming)
+                        DatabaseManager.manager.fetchMovieDetails(category: .topRated)
                     })
                     
                     
                     DispatchQueue.main.asyncAfter(deadline: .now()+3, execute: {
-                        self.movies = DatabaseManager.upcomingMovies
-                        self.upcomingTableView.reloadData()
+                        self.movies = DatabaseManager.topRatedMovies
+                        self.topRatedTableView.reloadData()
                     })
                 }
             }
-          
+            
             
         }
         

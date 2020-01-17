@@ -135,7 +135,7 @@ extension ViewController: UIScrollViewDelegate{
             pageEndReached = false
             let value: Double = Double((moviesScrolledCount+5)/20)
             if floor(value) == value {
-                pageCount = Int((moviesScrolledCount+5)/20) + 1
+                pageCount = pageCount + 1
             }
             
             if pageCount != 1 {

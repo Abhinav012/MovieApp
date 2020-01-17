@@ -19,11 +19,12 @@ class TopRatedViewController: UIViewController {
     var pageEndReached = false
     var verticalScrollEndReached = false
     var pageCount = 1
+    var popularPageCount = 1
     
     @IBOutlet weak var topRatedMoviesTableView: UITableView!
     override func viewDidLoad() {
         super.viewDidLoad()
-        
+       
          DispatchQueue.global().sync {
         self.apiManager.fetchMovieDetails(lang: "en-US", page: 1, category: .popular)
             
@@ -46,8 +47,17 @@ class TopRatedViewController: UIViewController {
     
     override func viewWillAppear(_ animated: Bool) {
         super.viewWillAppear(animated)
-
+        self.navigationController?.setNavigationBarHidden(true, animated: true)
         
+    }
+    
+ @objc func switchToDetailView(){
+        //Only_TopRatedMoviesViewController
+    let vc = storyboard?.instantiateViewController(withIdentifier: "Only_TopRatedMoviesViewController") as! Only_TopRatedMoviesViewController
+    
+    vc.movies = topRatedMovies
+    vc.pageCount = popularPageCount
+    self.navigationController?.pushViewController(vc, animated: true)
     }
 
 }
@@ -142,6 +152,7 @@ extension TopRatedViewController: UICollectionViewDelegate, UICollectionViewData
         cell.title.text = movie.title!
         cell.voteAvg.text = "vote average: \(Float(movie.voteAverage!))"
         cell.voteCount.text = "Vote Count: \(movie.voteCount!)"
+        cell.seeAllButton.addTarget(self, action: #selector(switchToDetailView), for: .touchUpInside)
         
         return cell
     }
@@ -177,12 +188,12 @@ extension TopRatedViewController: UIScrollViewDelegate{
             pageEndReached = false
             let value: Double = Double((moviesScrolledCount+10)/20)
             if floor(value) == value {
-                pageCount = Int((moviesScrolledCount+10)/20) + 1
+                popularPageCount = popularPageCount + 1
             }
             
-            if pageCount != 1{
-                print("Page Count: \(pageCount)")
-                self.apiManager.fetchMovieDetails(lang: "en-US", page: pageCount, category: .popular)
+            if popularPageCount != 1{
+                print("Page Count: \(popularPageCount)")
+                self.apiManager.fetchMovieDetails(lang: "en-US", page: popularPageCount, category: .popular)
                 
                 
                 DispatchQueue.global().sync {
@@ -210,7 +221,7 @@ extension TopRatedViewController: UIScrollViewDelegate{
             verticalScrollEndReached = false
             let value: Double = Double((topRatedMoviesScrollCount+5)/20)
             if floor(value) == value {
-                pageCount = Int((topRatedMoviesScrollCount+5)/20) + 1
+                pageCount = pageCount + 1
             }
             
              if pageCount != 1{

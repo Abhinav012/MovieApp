@@ -217,7 +217,7 @@ extension SearchViewController: UIScrollViewDelegate{
             pageEndReached = false
             let value: Double = Double((moviesScrolledCount+10)/20)
             if floor(value) == value {
-                pageCount = Int((moviesScrolledCount+10)/20) + 1
+                pageCount = pageCount + 1
             }
             
             if pageCount <= totalPageCount && pageCount != 1{

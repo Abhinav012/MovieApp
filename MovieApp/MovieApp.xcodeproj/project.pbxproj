@@ -9,6 +9,7 @@
 /* Begin PBXBuildFile section */
 		B108950D23D0351200B16266 /* SearchViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = B108950C23D0351200B16266 /* SearchViewController.swift */; };
 		B108950F23D0423600B16266 /* SearchedResultTableViewCell.swift in Sources */ = {isa = PBXBuildFile; fileRef = B108950E23D0423600B16266 /* SearchedResultTableViewCell.swift */; };
+		B11B135B23D1EE4E008AEACA /* OnlyTopRatedMoviesViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = B11B135A23D1EE4E008AEACA /* OnlyTopRatedMoviesViewController.swift */; };
 		B11C247323CF1EE2006CE6F7 /* LandingViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = B11C247223CF1EE2006CE6F7 /* LandingViewController.swift */; };
 		B11C247523CF2079006CE6F7 /* RootTabBarViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = B11C247423CF2079006CE6F7 /* RootTabBarViewController.swift */; };
 		B120FA2323CD8118008A2092 /* TopRatedCollectionViewCell.swift in Sources */ = {isa = PBXBuildFile; fileRef = B120FA2223CD8118008A2092 /* TopRatedCollectionViewCell.swift */; };
@@ -37,6 +38,7 @@
 		439E1FA916E0FCEF793EE1D4 /* Pods-MovieApp.debug.xcconfig */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = text.xcconfig; name = "Pods-MovieApp.debug.xcconfig"; path = "Target Support Files/Pods-MovieApp/Pods-MovieApp.debug.xcconfig"; sourceTree = "<group>"; };
 		B108950C23D0351200B16266 /* SearchViewController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SearchViewController.swift; sourceTree = "<group>"; };
 		B108950E23D0423600B16266 /* SearchedResultTableViewCell.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SearchedResultTableViewCell.swift; sourceTree = "<group>"; };
+		B11B135A23D1EE4E008AEACA /* OnlyTopRatedMoviesViewController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "Only\U0010TopRatedMoviesViewController.swift"; sourceTree = "<group>"; };
 		B11C247223CF1EE2006CE6F7 /* LandingViewController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = LandingViewController.swift; sourceTree = "<group>"; };
 		B11C247423CF2079006CE6F7 /* RootTabBarViewController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = RootTabBarViewController.swift; sourceTree = "<group>"; };
 		B120FA2223CD8118008A2092 /* TopRatedCollectionViewCell.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = TopRatedCollectionViewCell.swift; sourceTree = "<group>"; };
@@ -111,6 +113,7 @@
 				B120FA2623CD8423008A2092 /* TopRatedTrendingTableViewCell.swift */,
 				B120FA2923CD990C008A2092 /* PopularTableViewCell.swift */,
 				B120FA2B23CD9993008A2092 /* PopularCollectionViewCell.swift */,
+				B11B135A23D1EE4E008AEACA /* OnlyTopRatedMoviesViewController.swift */,
 			);
 			path = TopRated;
 			sourceTree = "<group>";
@@ -318,6 +321,7 @@
 				B1B1633A23CC911100A8038D /* MovieDetailViewController.swift in Sources */,
 				B1B1633123CC4D2100A8038D /* Constants.swift in Sources */,
 				B1B1633423CC4EE700A8038D /* MovieData.swift in Sources */,
+				B11B135B23D1EE4E008AEACA /* OnlyTopRatedMoviesViewController.swift in Sources */,
 				B120FA2A23CD990C008A2092 /* PopularTableViewCell.swift in Sources */,
 				B1BE2B8323CDCB08007A841A /* NowPlayingCollectionViewCell.swift in Sources */,
 				B11C247323CF1EE2006CE6F7 /* LandingViewController.swift in Sources */,
