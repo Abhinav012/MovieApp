@@ -66,14 +66,18 @@ extension UpcomingMoviesViewController: UITableViewDelegate, UITableViewDataSour
     
     func tableView(_ tableView: UITableView, cellForRowAt indexPath: IndexPath) -> UITableViewCell {
         let cell = tableView.dequeueReusableCell(withIdentifier: "UMtableViewCell", for: indexPath) as! UpcomingMoviesTableViewCell
+        if let _ =  movies[indexPath.row].posterPath {
         cell.movieImageView.sd_setImage(with: URL(string: imagDwldBaseURL+movies[indexPath.row].posterPath! ), completed: nil)
+        
+        }
+        
         cell.movieTitle.text = movies[indexPath.row].originalTitle
         cell.popularity.text = "\(movies[indexPath.row].popularity!)"
         cell.releaseDate.text = "Release Date: \(movies[indexPath.row].releaseDate!)"
         cell.voteCount.text = "vote count: \(movies[indexPath.row].voteCount!)"
         moviesScrolledCount = indexPath.row+1
         
-        if indexPath.row == movies.count-6{
+        if indexPath.row == movies.count-11{
             pageEndReached = true
         }
         
@@ -95,19 +99,18 @@ extension UpcomingMoviesViewController: UITableViewDelegate, UITableViewDataSour
 extension UpcomingMoviesViewController: UIScrollViewDelegate{
     
     func scrollViewDidScroll(_ scrollView: UIScrollView) {
-        if (scrollView.contentOffset.y + 5*92 >= (scrollView.contentSize.height - scrollView.frame.size.height) && pageEndReached) {
+        if (scrollView.contentOffset.y + 10*92 >= (scrollView.contentSize.height - scrollView.frame.size.height) && pageEndReached) {
             pageEndReached = false
-            let value: Double = Double((moviesScrolledCount+5)/20)
+            let value: Double = Double((moviesScrolledCount+10)/20)
             if floor(value) == value {
-                pageCount = Int((moviesScrolledCount+5)/20) + 1
+                pageCount = Int((moviesScrolledCount+10)/20) + 1
             }
             
             
-            self.apiManager.fetchMovieDetails(lang: "en-US", page: self.pageCount, category: .upcoming)
+            self.apiManager.fetchMovieDetails(lang: "en-US", page: pageCount, category: .upcoming)
             
             
             DispatchQueue.global().sync {
-                self.apiManager.fetchMovieDetails(lang: "en-US", page: 1, category: .upcoming)
                 DispatchQueue.main.asyncAfter(deadline: .now()+2, execute: {
                     DatabaseManager.manager.fetchMovieDetails(category: .upcoming)
                 })
