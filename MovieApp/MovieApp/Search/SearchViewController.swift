@@ -17,6 +17,8 @@ class SearchViewController: UIViewController {
     var pageCount = 1
     var moviesScrolledCount = 0
     var pageEndReached = false
+    var totalPageCount = 0
+    var searchText = ""
     
     @IBOutlet weak var searchBar: UISearchBar!
     @IBOutlet weak var searchTableView: UITableView!
@@ -25,6 +27,10 @@ class SearchViewController: UIViewController {
         super.viewDidLoad()
 
         // Do any additional setup after loading the view.
+    }
+    
+    override func touchesBegan(_ touches: Set<UITouch>, with event: UIEvent?) {
+        searchTableView.keyboardDismissMode = .interactive
     }
 
 }
@@ -86,6 +92,48 @@ extension SearchViewController: UITableViewDelegate, UITableViewDataSource{
         }
         
     }
+    
+    func fetchSearchData(searchText: String, pageCount: Int){
+        let text = searchText.replacingOccurrences(of: " ", with: "+")
+        
+        let url = URL(string: "https://api.themoviedb.org/3/search/movie?api_key=60af9fe8e3245c53ad9c4c0af82d56d6&language=en-US&page=\(pageCount)&query=\(text)")!
+        let urlRequest = URLRequest(url: url)
+        let session = URLSession.shared
+        let dataTask = session.dataTask(with: urlRequest) { (data, response, error) in
+            
+            if let error = error {
+                print(error.localizedDescription)
+            }else{
+                if let data = data{
+                    do{
+                        let decoder = JSONDecoder()
+                        let movieDetails = try decoder.decode(MovieResults.self, from: data)
+                        self.totalPageCount = movieDetails.totalPages!
+                        if let searchedMovies = movieDetails.results{
+                           // self.searchedMovies = searchedMovies
+                            
+                            for movie in searchedMovies{
+                                print("Movie backdrop: \(movie.backdropPath)")
+                               self.searchedMovies.append(movie)
+                            }
+                            
+                            DispatchQueue.main.async {
+                                self.searchTableView.separatorStyle = .singleLine
+                                self.searchTableView.reloadData()
+                            }
+                            
+                        }
+                        
+                    }catch(let error){
+                        print(error.localizedDescription)
+                    }
+                    
+                }
+            }
+        }
+        
+        dataTask.resume()
+    }
 }
 
 extension SearchViewController: UISearchBarDelegate{
@@ -94,46 +142,10 @@ extension SearchViewController: UISearchBarDelegate{
         didSelectedMovie = false
         
         if searchText.count >= 3{
+            self.pageCount = 1
+            self.searchText = searchText
+            fetchSearchData(searchText: searchText, pageCount: self.pageCount)
             
-            let text = searchText.replacingOccurrences(of: " ", with: "+")
-            
-            let url = URL(string: "https://api.themoviedb.org/3/search/movie?api_key=60af9fe8e3245c53ad9c4c0af82d56d6&language=en-US&page=1&query=\(text)")!
-            let urlRequest = URLRequest(url: url)
-            let session = URLSession.shared
-            let dataTask = session.dataTask(with: urlRequest) { (data, response, error) in
-                
-                if let error = error {
-                    print(error.localizedDescription)
-                }else{
-                    if let data = data{
-                        do{
-                            let decoder = JSONDecoder()
-                            let movieDetails = try decoder.decode(MovieResults.self, from: data)
-                            
-                            if let searchedMovies = movieDetails.results{
-                                self.searchedMovies = searchedMovies
-                                
-                                for movie in searchedMovies{
-                                    print("Movie backdrop: \(movie.backdropPath)")
-                                    
-                                }
-                                
-                                DispatchQueue.main.async {
-                                    self.searchTableView.separatorStyle = .singleLine
-                                    self.searchTableView.reloadData()
-                                }
-                                
-                            }
-                            
-                        }catch(let error){
-                            print(error.localizedDescription)
-                        }
-                        
-                    }
-                }
-            }
-            
-            dataTask.resume()
         }else{
             
             self.searchedMovies = [Movie]()
@@ -144,7 +156,36 @@ extension SearchViewController: UISearchBarDelegate{
         }
         
     }
+    
     func searchBarSearchButtonClicked(_ searchBar: UISearchBar) {
         searchBar.resignFirstResponder()
+    }
+}
+
+extension SearchViewController: UIScrollViewDelegate{
+    
+    func scrollViewWillBeginDragging(_ scrollView: UIScrollView) {
+        searchBar.resignFirstResponder()
+    }
+    
+    
+    func scrollViewDidScroll(_ scrollView: UIScrollView) {
+        
+        
+        
+        if (scrollView.contentOffset.y + 10*44 >= (scrollView.contentSize.height - scrollView.frame.size.height) && pageEndReached) {
+            pageEndReached = false
+            let value: Double = Double((moviesScrolledCount+10)/20)
+            if floor(value) == value {
+                pageCount = Int((moviesScrolledCount+10)/20) + 1
+            }
+            
+            if pageCount <= totalPageCount{
+                   fetchSearchData(searchText: self.searchText, pageCount: pageCount)
+            }
+            
+            
+        }
+        
     }
 }

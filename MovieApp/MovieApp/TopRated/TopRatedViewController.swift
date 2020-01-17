@@ -14,6 +14,11 @@ class TopRatedViewController: UIViewController {
     var popularMovies = [Movie]()
     var apiManager = APIManager()
     var databaseManager = DatabaseManager()
+    var moviesScrolledCount = 0
+    var topRatedMoviesScrollCount = 0
+    var pageEndReached = false
+    var verticalScrollEndReached = false
+    var pageCount = 1
     
     @IBOutlet weak var topRatedMoviesTableView: UITableView!
     override func viewDidLoad() {
@@ -53,6 +58,11 @@ extension TopRatedViewController: UITableViewDataSource, UITableViewDelegate{
     }
     
     func tableView(_ tableView: UITableView, cellForRowAt indexPath: IndexPath) -> UITableViewCell {
+         moviesScrolledCount = indexPath.row
+        
+        if indexPath.row == popularMovies.count-12{
+            pageEndReached = true
+        }
         
         if indexPath.row != 0{
             let cell = tableView.dequeueReusableCell(withIdentifier: "popularMoviesCell", for: indexPath) as! PopularTableViewCell
@@ -119,6 +129,10 @@ extension TopRatedViewController: UICollectionViewDelegate, UICollectionViewData
     
     func collectionView(_ collectionView: UICollectionView, cellForItemAt indexPath: IndexPath) -> UICollectionViewCell {
         
+         topRatedMoviesScrollCount = indexPath.row+1
+        if indexPath.row == topRatedMovies.count-6{
+            verticalScrollEndReached = true
+        }
         
         let cell = collectionView.dequeueReusableCell(withReuseIdentifier: "topRatedCollectionViewCell", for: indexPath) as! TopRatedCollectionViewCell
         let movie = topRatedMovies[indexPath.row]
@@ -155,3 +169,67 @@ extension TopRatedViewController: UICollectionViewDelegate, UICollectionViewData
         return 16
     }
 }
+
+extension TopRatedViewController: UIScrollViewDelegate{
+    
+    func scrollViewDidScroll(_ scrollView: UIScrollView) {
+        if (scrollView.contentOffset.y+300+127+10*80 >= (scrollView.contentSize.height - scrollView.frame.size.height) && pageEndReached) {
+            pageEndReached = false
+            let value: Double = Double((moviesScrolledCount+10)/20)
+            if floor(value) == value {
+                pageCount = Int((moviesScrolledCount+10)/20) + 1
+            }
+            
+            
+            self.apiManager.fetchMovieDetails(lang: "en-US", page: pageCount, category: .popular)
+            
+            
+            DispatchQueue.global().sync {
+                DispatchQueue.main.asyncAfter(deadline: .now()+2, execute: {
+                    DatabaseManager.manager.fetchMovieDetails(category: .popular)
+                })
+                
+                
+                DispatchQueue.main.asyncAfter(deadline: .now()+3, execute: {
+                    self.popularMovies = DatabaseManager.popularMovies
+                    self.topRatedMoviesTableView.reloadData()
+                })
+            }
+            
+        }
+        
+        
+        let offset = scrollView.contentOffset.x+5*(self.view.frame.width-2*32)
+        let size = scrollView.contentSize.width - scrollView.frame.size.width
+        let condition1 = (offset >= size)
+        
+        if  condition1 && verticalScrollEndReached {
+            verticalScrollEndReached = false
+            let value: Double = Double((topRatedMoviesScrollCount+5)/20)
+            if floor(value) == value {
+                pageCount = Int((topRatedMoviesScrollCount+5)/20) + 1
+            }
+            
+            
+            self.apiManager.fetchMovieDetails(lang: "en-US", page: pageCount, category: .topRated)
+            
+            
+            DispatchQueue.global().sync {
+                DispatchQueue.main.asyncAfter(deadline: .now()+2, execute: {
+                    DatabaseManager.manager.fetchMovieDetails(category: .topRated)
+                })
+                
+                
+                DispatchQueue.main.asyncAfter(deadline: .now()+3, execute: {
+                    self.topRatedMovies = DatabaseManager.topRatedMovies
+                    self.topRatedMoviesTableView.reloadData()
+                })
+            }
+            
+        }
+        
+    }
+    
+    
+}
+
