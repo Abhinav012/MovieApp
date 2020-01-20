@@ -34,6 +34,7 @@ class MovieDetailViewController: UIViewController {
     
     override func viewWillAppear(_ animated: Bool) {
         super.viewWillAppear(animated)
+        self.navigationController?.setNavigationBarHidden(true, animated: true)
         movieTitle.text = movie?.originalTitle!
         voteCount.text = "vote count: \((movie?.voteCount)!)"
         movieDescription.text = movie?.overview!

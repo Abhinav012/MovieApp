@@ -25,15 +25,7 @@ class ViewController: UIViewController {
     override func viewDidLoad() {
         super.viewDidLoad()
         
-        let date = Date()
-        let calender = Calendar(identifier: .gregorian)
-        let dateOfMonth = calender.component(.day, from: date)
-        let monthOfCalender = Month(rawValue: calender.component(.month, from: date))
-        let weekdayOfMonth = WeekDay(rawValue: calender.component(.weekday, from: date))
         
-        setDayAndmonthOfYear(weekday: weekdayOfMonth!, month: monthOfCalender!)
-        
-        dateLabel.text = "\(day) \(dateOfMonth) \(monthOfYear)"
         
         DispatchQueue.global().sync {
             self.apiManager.fetchMovieDetails(lang: "en-US", page: 1, category: .nowPlaying)
@@ -60,7 +52,15 @@ class ViewController: UIViewController {
         super.viewWillAppear(animated)
         
        
+        let date = Date()
+        let calender = Calendar(identifier: .gregorian)
+        let dateOfMonth = calender.component(.day, from: date)
+        let monthOfCalender = Month(rawValue: calender.component(.month, from: date))
+        let weekdayOfMonth = WeekDay(rawValue: calender.component(.weekday, from: date))
         
+        setDayAndmonthOfYear(weekday: weekdayOfMonth!, month: monthOfCalender!)
+        
+        dateLabel.text = "\(day) \(dateOfMonth) \(monthOfYear)"
         
     }
 
