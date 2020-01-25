@@ -16,6 +16,7 @@ class NowPlayingCollectionViewCell: UICollectionViewCell {
     @IBOutlet weak var movieImageView: UIImageView!
     @IBOutlet weak var voteAverage: UILabel!
     
+    @IBOutlet weak var movieImageButton: UIButton!
     @IBOutlet weak var movieDescription: UILabel!
     @IBOutlet weak var releaseDate: UILabel!
     

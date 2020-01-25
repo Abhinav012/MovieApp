@@ -18,10 +18,9 @@ class AppDelegate: UIResponder, UIApplicationDelegate {
 
     func application(_ application: UIApplication, didFinishLaunchingWithOptions launchOptions: [UIApplication.LaunchOptionsKey: Any]?) -> Bool {
         
-        let defaults = UserDefaults.standard
         
-        defaults.set(true, forKey: "didFetchForFirstTime")
-        deleteCompleteData()
+        
+       // deleteCompleteData()
         return true
     }
 

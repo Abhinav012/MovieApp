@@ -18,63 +18,56 @@ class DatabaseManager{
    static var popularMovies = [Movie]()
    static var upcomingMovies = [Movie]()
     
-    func storeMovieDetails(movies: [Movie],category : MovieCategory){
+    func storeMovieDetails(movies: [Movie],category : MovieCategory, completion: @escaping (_ success : Bool)-> Void){
         
        
         
-        DispatchQueue.main.async {
+    
             let appDelegate = UIApplication.shared.delegate as! AppDelegate
             let context = appDelegate.persistentContainer.viewContext
             
-            let entity = NSEntityDescription.entity(forEntityName: "MovieDetails", in: context)
+            let entity = NSEntityDescription.entity(forEntityName: "MoviesDetail", in: context)
             
             for movie in movies{
-                let movieResult = NSManagedObject(entity: entity!, insertInto: context)
+                let movieResult = MoviesDetail(entity: entity!, insertInto: context)
                 
+                if let _ = movie.adult, let _ = movie.backdropPath, let _ = movie.posterPath, let _ = movie.id, let _ = movie.originalLanguage, let _ = movie.originalTitle, let _ = movie.overview, let _ = movie.popularity, let _ = movie.releaseDate, let _ = movie.title, let _ = movie.video, let _ = movie.voteCount, let _ = movie.voteAverage
+                {
+                    movieResult.adult = movie.adult!
+                    movieResult.backdropPath = movie.backdropPath!
+                    movieResult.posterPath = movie.posterPath!
+                    movieResult.id = Int64(movie.id!)
+                    movieResult.originalLanguage = movie.originalLanguage!
+                    movieResult.originalTitle = movie.originalTitle!
+                    movieResult.overview = movie.overview!
+                    movieResult.popularity = movie.popularity!
+                    movieResult.releaseDate = movie.releaseDate!
+                    movieResult.title = movie.title!
+                    movieResult.video = movie.video!
+                    movieResult.voteCount = Int64(movie.voteCount!)
+                    movieResult.voteAverage = Float(movie.voteAverage!)
+                    movieResult.saveDate = Date()
+                    movieResult.movieType = category.rawValue
+                    
+                }
                 print(movie.title)
                 print(movie.originalTitle)
+                print(movie.backdropPath)
+                print(movie.posterPath)
                 
-                movieResult.setValue(movie.adult, forKey: "adult")
-                movieResult.setValue(movie.backdropPath, forKey: "backdrop_path")
-                movieResult.setValue(movie.id, forKey: "id")
-                movieResult.setValue(movie.originalLanguage, forKey: "original_language")
-                movieResult.setValue(movie.originalTitle, forKey: "original_title")
-                movieResult.setValue(movie.overview, forKey: "overview")
-                movieResult.setValue(movie.popularity, forKey: "popularity")
-                movieResult.setValue(movie.posterPath, forKey: "poster_path")
-                movieResult.setValue(movie.releaseDate, forKey: "release_date")
-                movieResult.setValue(movie.title, forKey: "title")
-                movieResult.setValue(movie.video, forKey: "video")
-                movieResult.setValue(movie.voteAverage, forKey: "vote_average")
-                movieResult.setValue(movie.voteCount, forKey: "vote_count")
-                movieResult.setValue(Date(), forKey: "save_date")
-                
-                switch category{
-                case .nowPlaying:
-                    movieResult.setValue("now_playing", forKey: "movie_type")
-                 
-                case .popular:
-                    movieResult.setValue("popular", forKey: "movie_type")
 
-                case .topRated:
-                    movieResult.setValue("top_rated", forKey: "movie_type")
-                    
-                case .upcoming:
-                    movieResult.setValue("upcoming", forKey: "movie_type")
-                }
                 
             }
             
             do{
                 try context.save()
-                
-                //self.fetchMovieDetails(category: category)
+                completion(true)
             } catch(let error){
                 print(error.localizedDescription)
             }
             
             
-        }
+        
         
         
     }
@@ -84,23 +77,23 @@ class DatabaseManager{
         DispatchQueue.main.async {
             let appDelegate = UIApplication.shared.delegate as! AppDelegate
             let context = appDelegate.persistentContainer.viewContext
-            let fetchRequest = NSFetchRequest<NSFetchRequestResult>(entityName: "MovieDetails")
+            let fetchRequest = NSFetchRequest<NSFetchRequestResult>(entityName: "MoviesDetail")
             
             switch category{
             case .nowPlaying:
-                fetchRequest.predicate = NSPredicate(format: "movie_type == %@", argumentArray: ["now_playing"])
+                fetchRequest.predicate = NSPredicate(format: "movieType == %@", argumentArray: ["now_playing"])
                 DatabaseManager.nowPlayingMovies = [Movie]()
                 
             case .popular:
-                fetchRequest.predicate = NSPredicate(format: "movie_type == %@", argumentArray: ["popular"])
+                fetchRequest.predicate = NSPredicate(format: "movieType == %@", argumentArray: ["popular"])
                 DatabaseManager.popularMovies = [Movie]()
                 
             case .topRated:
-                fetchRequest.predicate = NSPredicate(format: "movie_type == %@", argumentArray: ["top_rated"])
+                fetchRequest.predicate = NSPredicate(format: "movieType == %@", argumentArray: ["top_rated"])
                 DatabaseManager.topRatedMovies = [Movie]()
                 
             case .upcoming:
-                fetchRequest.predicate = NSPredicate(format: "movie_type == %@", argumentArray: ["upcoming"])
+                fetchRequest.predicate = NSPredicate(format: "movieType == %@", argumentArray: ["upcoming"])
                 DatabaseManager.upcomingMovies = [Movie]()
             }
             
@@ -125,34 +118,33 @@ class DatabaseManager{
         print("data Deleted")
     }
     
-    func fetchMovieDetails(category: MovieCategory){
+    func fetchMovieDetails(category: MovieCategory, completion: (_ success : Bool)-> Void){
         
         
-        DispatchQueue.main.async {
             let appDelegate = UIApplication.shared.delegate as! AppDelegate
             let context = appDelegate.persistentContainer.viewContext
-            let fetchRequest = NSFetchRequest<NSFetchRequestResult>(entityName: "MovieDetails")
+            let fetchRequest = NSFetchRequest<NSFetchRequestResult>(entityName: "MoviesDetail")
             
             
             switch category{
             case .nowPlaying:
-                fetchRequest.predicate = NSPredicate(format: "movie_type == %@", argumentArray: ["now_playing"])
+                fetchRequest.predicate = NSPredicate(format: "movieType == %@", argumentArray: ["now_playing"])
                 DatabaseManager.nowPlayingMovies = [Movie]()
                 
             case .popular:
-                fetchRequest.predicate = NSPredicate(format: "movie_type == %@", argumentArray: ["popular"])
+                fetchRequest.predicate = NSPredicate(format: "movieType == %@", argumentArray: ["popular"])
                 DatabaseManager.popularMovies = [Movie]()
                 
             case .topRated:
-                fetchRequest.predicate = NSPredicate(format: "movie_type == %@", argumentArray: ["top_rated"])
+                fetchRequest.predicate = NSPredicate(format: "movieType == %@", argumentArray: ["top_rated"])
                 DatabaseManager.topRatedMovies = [Movie]()
                 
             case .upcoming:
-                fetchRequest.predicate = NSPredicate(format: "movie_type == %@", argumentArray: ["upcoming"])
+                fetchRequest.predicate = NSPredicate(format: "movieType == %@", argumentArray: ["upcoming"])
                 DatabaseManager.upcomingMovies = [Movie]()
             }
             
-            let sectionSortDescriptor = NSSortDescriptor(key: "save_date", ascending: true)
+            let sectionSortDescriptor = NSSortDescriptor(key: "saveDate", ascending: true)
             let sortDescriptors = [sectionSortDescriptor]
             fetchRequest.sortDescriptors = sortDescriptors
 //            let sort = NSSortDescriptor(key: "date", ascending: true)
@@ -160,23 +152,25 @@ class DatabaseManager{
             
             do{
                 let result = try context.fetch(fetchRequest)
-                for data in result as! [NSManagedObject]{
+                for data in result as! [MoviesDetail]{
                     
                     var movie = Movie()
-                    
-                    movie.originalTitle = data.value(forKey: "original_title") as? String
-                    movie.popularity  = data.value(forKey: "popularity") as? Double
-                    movie.voteCount = data.value(forKey: "vote_count") as? Int
-                    movie.video = data.value(forKey: "video") as? Bool
-                    movie.posterPath = data.value(forKey: "poster_path") as? String
-                    movie.id = data.value(forKey: "id") as? Int
-                    movie.adult = data.value(forKey: "adult") as? Bool
-                    movie.backdropPath = data.value(forKey: "backdrop_path") as? String
-                    movie.originalLanguage = data.value(forKey: "original_language") as? String
-                    movie.title = data.value(forKey: "title") as? String
-                    movie.voteAverage = data.value(forKey: "vote_average") as? Double
-                    movie.overview = data.value(forKey: "overview") as? String
-                    movie.releaseDate = data.value(forKey: "release_date") as? String
+                    if let _ = data.originalTitle, let _ = data.posterPath, let _ = data.backdropPath, let _ = data.title, let _ = data.overview, let _ = data.releaseDate{
+                        movie.originalTitle = data.originalTitle!
+                        movie.popularity  = data.popularity
+                        movie.voteCount = Int(data.voteCount)
+                        movie.video = data.video
+                        movie.posterPath = data.posterPath!
+                        movie.id = Int(data.id)
+                        movie.adult = data.adult
+                        movie.backdropPath = data.backdropPath!
+                        movie.originalLanguage = data.originalLanguage
+                        movie.title = data.title!
+                        movie.voteAverage = Double(exactly: data.voteAverage)
+                        movie.overview = data.overview!
+                        movie.releaseDate = data.releaseDate!
+                        
+                    }
                     
                     switch category{
                     case .nowPlaying:
@@ -190,12 +184,12 @@ class DatabaseManager{
                     }
                     
                 }
-                
+                completion(true)
             }catch(let error){
                 print(error.localizedDescription)
             }
            
-        }
+        
         print("fetch called")
     }
     
